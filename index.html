@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>💫 給你的驚喜</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:100%;height:100%;
+  background:#04030a;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  overflow:hidden;user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+}
+.card-wrap{
+  position:relative;
+  width:min(340px,90vw);
+  border-radius:6px;overflow:hidden;
+  box-shadow:0 25px 60px rgba(0,0,0,.9);
+  touch-action:none;
+  -webkit-touch-callout:none;
+  cursor:grab;
+}
+.card-wrap:active{cursor:grabbing;}
+video{width:100%;display:block;pointer-events:none;}
+.overlay{position:absolute;inset:0;pointer-events:none;transition:background .04s;}
+.hint{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.65);color:rgba(255,255,255,.8);
+  font-size:.65rem;letter-spacing:.1em;
+  padding:.3rem .9rem;border-radius:20px;
+  white-space:nowrap;pointer-events:none;
+  transition:opacity .6s;font-family:serif;
+}
+.bars{display:flex;flex-direction:column;gap:5px;width:min(340px,90vw);margin-top:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-label{color:rgba(201,169,110,.5);font-size:.55rem;letter-spacing:.1em;font-family:monospace;width:12px;}
+.bar-track{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#c9a96e,#e8d5a3);border-radius:2px;width:50%;}
+.caption{
+  color:#e8d5a3;font-family:serif;font-style:italic;
+  font-size:1rem;text-align:center;margin-top:.9rem;
+  letter-spacing:.05em;line-height:1.6;
+}
+</style>
+</head>
+<body>
+<div class="card-wrap" id="card">
+  <video id="vid" preload="auto" muted playsinline webkit-playsinline x5-playsinline>
+    <source src="video.mp4" type="video/mp4">
+  </video>
+  <div class="overlay" id="overlay"></div>
+  <div class="hint" id="hint">拖動畫面控制視角</div>
+</div>
+
+<div class="bars">
+  <div class="bar-row">
+    <span class="bar-label">X</span>
+    <div class="bar-track"><div class="bar-fill" id="barX"></div></div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Y</span>
+    <div class="bar-track"><div class="bar-fill" id="barY"></div></div>
+  </div>
+</div>
+<p class="caption">每次看見這條項鍊<br>就想起你</p>
+
+<script>
+var vid = document.getElementById('vid');
+var card = document.getElementById('card');
+var overlay = document.getElementById('overlay');
+var hint = document.getElementById('hint');
+var barX = document.getElementById('barX');
+var barY = document.getElementById('barY');
+
+var DURATION = 7.0;
+var px = 0.5, py = 0.5;
+var isDragging = false;
+var startX = 0, startY = 0;
+var startPx = 0.5, startPy = 0.5;
+var lastSeekTime = 0;
+
+vid.addEventListener('loadedmetadata', function() {
+  vid.pause();
+  vid.currentTime = DURATION * 0.5;
+});
+vid.addEventListener('play', function() { vid.pause(); });
+
+function seekTo(nx, ny) {
+  px = Math.max(0, Math.min(1, nx));
+  py = Math.max(0, Math.min(1, ny));
+  var now = Date.now();
+  if (now - lastSeekTime > 16) {
+    vid.currentTime = px * DURATION;
+    lastSeekTime = now;
+  }
+  barX.style.width = (px * 100) + '%';
+  barY.style.width = (py * 100) + '%';
+  var ry = (px - 0.5) * 2 * 12;
+  var rx = (py - 0.5) * 2 * -8;
+  card.style.transform = 'perspective(800px) rotateY(' + ry + 'deg) rotateX(' + rx + 'deg)';
+  var lx = 50 - (px - 0.5) * 2 * 25;
+  var ly = 50 - (py - 0.5) * 2 * 20;
+  overlay.style.background = 'radial-gradient(ellipse 65% 65% at ' + lx + '% ' + ly + '%, rgba(255,248,220,.1) 0%, transparent 60%)';
+}
+
+function onStart(ex, ey) {
+  isDragging = true;
+  startX = ex; startY = ey;
+  startPx = px; startPy = py;
+  hint.style.opacity = '0';
+}
+function onMove(ex, ey) {
+  if (!isDragging) return;
+  seekTo(startPx + (ex - startX) / 200, startPy + (ey - startY) / 200);
+}
+function onEnd() { isDragging = false; }
+
+card.addEventListener('mousedown', function(e) { onStart(e.clientX, e.clientY); e.preventDefault(); });
+document.addEventListener('mousemove', function(e) { onMove(e.clientX, e.clientY); });
+document.addEventListener('mouseup', onEnd);
+
+card.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  onStart(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}, {passive:false});
+document.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (!isDragging) return;
+  onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+}, {passive:false});
+document.addEventListener('touchend', onEnd, {passive:false});
+document.addEventListener('touchcancel', onEnd, {passive:false});
+
+setTimeout(function() { hint.style.opacity = '0'; }, 4000);
+</script>
+</body>
+</html>
