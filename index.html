@@ -218,11 +218,12 @@ function tickFW(){
 function applyTilt(nx,ny){
   card.style.transform='rotateY('+(nx*26)+'deg) rotateX('+(-ny*18)+'deg)';
   // 夜景：最遠，往傾斜方向退
-  lSky.style.transform='translate('+(nx*8)+'%,'+(ny*6)+'%)';
-  // 背景照片：往傾斜方向退（遠）
-  lBg.style.transform='translate('+(nx*6)+'%,'+(ny*4)+'%)';
-  // 人物：往反方向衝（近，真正凸出）
-  lPerson.style.transform='translate('+(-nx*10)+'%,'+(-ny*7)+'%) scale(1.0)';
+  // 夜景稍微移動
+  lSky.style.transform='translate('+(nx*4)+'%,'+(ny*3)+'%)';
+  // 背景照片完全不動
+  lBg.style.transform='translate(0,0)';
+  // 人物往前凸出
+  lPerson.style.transform='translate('+(-nx*10)+'%,'+(-ny*7)+'%)';
   shadowEl.style.transform='skewX('+(nx*10)+'deg) scaleX('+(1-Math.abs(nx)*.32)+')';
   var gx=20+(1-(nx+1)/2)*60,gy=20+(1-(ny+1)/2)*60;
   gloss.style.background='radial-gradient(ellipse 70% 70% at '+gx+'% '+gy+'%, rgba(255,255,255,.13) 0%, transparent 55%)';
