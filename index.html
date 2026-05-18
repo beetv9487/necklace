@@ -89,6 +89,7 @@ body{
     <h3>旋轉角度</h3>
     <div class="row"><label>前景旋轉</label><input type="range" id="fgR" min="-180" max="180" value="0" step="1"><span class="val" id="vFgR">0</span>°</div>
     <div class="row"><label>背景旋轉</label><input type="range" id="bgR" min="-180" max="180" value="0" step="1"><span class="val" id="vBgR">0</span>°</div>
+    <div class="row"><label>背景大小</label><input type="range" id="bgZ" min="60" max="250" value="100" step="1"><span class="val" id="vBgZ">100</span>%</div>
   </div>
 </div>
 
@@ -126,7 +127,7 @@ var fgImg=document.getElementById('fgImg');
 var bgImg=document.getElementById('bgImg');
 var dot=document.getElementById('dot');
 
-var P={fgX:0,fgY:0,fgZ:100,fgR:0,bgR:0,fpX:9,fpY:6,bpX:7,bpY:5,tltX:18,tltY:13};
+var P={fgX:0,fgY:0,fgZ:100,fgR:0,bgR:0,bgZ:100,fpX:9,fpY:6,bpX:7,bpY:5,tltX:18,tltY:13};
 var lastNx=0,lastNy=0,isDragging=false,startX=0,startY=0,startNx=0,startNy=0;
 var lastTap=0;
 
@@ -138,7 +139,7 @@ function bind(id,key,vid){
   });
 }
 bind('fgX','fgX','vFgX'); bind('fgY','fgY','vFgY'); bind('fgZ','fgZ','vFgZ');
-bind('fgR','fgR','vFgR'); bind('bgR','bgR','vBgR');
+bind('fgR','fgR','vFgR'); bind('bgR','bgR','vBgR'); bind('bgZ','bgZ','vBgZ');
 bind('fpX','fpX','vFpX'); bind('fpY','fpY','vFpY');
 bind('bpX','bpX','vBpX'); bind('bpY','bpY','vBpY');
 bind('tltX','tltX','vTltX'); bind('tltY','tltY','vTltY');
@@ -150,7 +151,7 @@ function applyTilt(nx,ny){
 
   // BG: 同向移動 + 旋轉
   lBg.style.transform='translate('+(nx*P.bpX)+'%,'+(ny*P.bpY)+'%)';
-  bgImg.style.transform='rotate('+P.bgR+'deg)';
+  bgImg.style.transform='rotate('+P.bgR+'deg) scale('+(P.bgZ/100)+')';
 
   // FG: 反向移動 + 旋轉
   var s=P.fgZ/100;
