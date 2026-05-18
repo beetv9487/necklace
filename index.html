@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>💫 給你的驚喜</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-  background:#0d0d1a;
+  background:#1a1a2e;
   display:flex;align-items:center;justify-content:center;
   min-height:100vh;overflow:hidden;touch-action:none;
 }
@@ -38,6 +39,21 @@ body{
   background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 30%,rgba(2,1,10,.55) 100%);}
 .frame{position:absolute;inset:0;z-index:7;pointer-events:none;
   box-shadow:inset 0 0 0 2px rgba(201,169,110,.5);}
+
+.poem{
+  width:min(320px,90vw);
+  margin-top:20px;
+  color:rgba(255,255,255,.82);
+  font-family:"Zen Maru Gothic", sans-serif;
+  font-size:.85rem;
+  line-height:2;
+  text-align:center;
+  letter-spacing:.05em;
+  opacity:0;
+  transition:opacity 2s ease 1s;
+}
+.poem.show{opacity:1;}
+.poem p{margin-bottom:.8em;}
 </style>
 </head>
 <body>
@@ -50,6 +66,14 @@ body{
       <div class="frame"></div>
     </div>
   </div>
+
+  <div class="poem" id="poem">
+    <p>寶貝，當你打開這個的時候<br>大概是又在想我了吧</p>
+    <p>我們的相遇誰都沒想到<br>明明不是彼此喜歡的類型，卻互相吸引<br>生活中沒有交集的兩個人，卻被命運的紅線牽絆</p>
+    <p>每當你說好想打死我<br>我知道那是你想我的方式<br>因為每次說完<br>你都會說想你了</p>
+    <p>我不太會說情話<br>但我想讓你知道<br>你在我心裡<br>一直都有位置</p>
+    <p>想我就說<br>我在</p>
+  </div>
 </div>
 
 <script>
@@ -58,7 +82,8 @@ document.getElementById('fgImg').src = 'person.png';
 
 // 開場淡入
 window.addEventListener('load', function(){
-  setTimeout(function(){ document.getElementById('wrap').classList.add('show'); }, 100);
+  setTimeout(function(){ document.getElementById('wrap').classList.add('show');
+    document.getElementById('poem').classList.add('show'); }, 100);
 });
 
 var card=document.getElementById('card');
@@ -67,7 +92,7 @@ var lFg=document.getElementById('lFg');
 var fgImg=document.getElementById('fgImg');
 
 var P={
-  fgX:0, fgY:10, fgZ:120,
+  fgX:0, fgY:20, fgZ:120,
   fgR:0, bgR:-11, bgZ:160,
   fpX:4.5, fpY:7.5,
   bpX:8.5, bpY:6,
@@ -146,6 +171,6 @@ document.addEventListener('touchend',function(){
 
 applyTilt(0,0);
 </script>
-<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v2</div>
+<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v3</div>
 </body>
 </html>
