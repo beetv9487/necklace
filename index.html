@@ -13,7 +13,7 @@ body{
 }
 
 /* 開場淡入 */
-#wrap{opacity:0;transition:opacity 1.2s ease;}
+#wrap{opacity:0;transition:opacity 2s ease;}
 #wrap.show{opacity:1;}
 
 .scene{perspective:700px;}
@@ -67,7 +67,7 @@ var lFg=document.getElementById('lFg');
 var fgImg=document.getElementById('fgImg');
 
 var P={
-  fgX:0, fgY:0, fgZ:120,
+  fgX:0, fgY:10, fgZ:120,
   fgR:0, bgR:-11, bgZ:160,
   fpX:4.5, fpY:7.5,
   bpX:8.5, bpY:6,
@@ -146,6 +146,6 @@ document.addEventListener('touchend',function(){
 
 applyTilt(0,0);
 </script>
-<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.25);z-index:999;pointer-events:none;">v2</div>
+<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v2</div>
 </body>
 </html>
