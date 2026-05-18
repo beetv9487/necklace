@@ -97,7 +97,8 @@ function applyTilt(nx,ny){
   card.style.transform='perspective(700px) rotateY('+(nx*P.tltX)+'deg) rotateX('+(-ny*P.tltY)+'deg)';
   lBg.style.transform='translate('+(nx*P.bpX)+'%,'+(ny*P.bpY)+'%)';
   document.getElementById('bgImg').style.transform='rotate('+P.bgR+'deg) scale('+(P.bgZ/100)+')';
-  var s=P.fgZ/100;
+  // 右滑變大、左滑變小，最大最小相差20%
+  var s=(P.fgZ + nx*10)/100;
   fgImg.style.width=(cw*s)+'px'; fgImg.style.height=(ch*s)+'px';
   fgImg.style.transform='rotate('+P.fgR+'deg)';
   var ox=(P.fgX/100*cw)-(nx*P.fpX/100*cw);
@@ -145,5 +146,6 @@ document.addEventListener('touchend',function(){
 
 applyTilt(0,0);
 </script>
+<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.25);z-index:999;pointer-events:none;">v2</div>
 </body>
 </html>
