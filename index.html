@@ -8,9 +8,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-  background:#3d1020;
-  display:flex;align-items:center;justify-content:center;
+  background:#0d1b3e;
+  display:flex;align-items:flex-start;justify-content:center;
   min-height:100vh;overflow:hidden;touch-action:none;
+  padding-top:30px;
 }
 
 /* 開場淡入 */
@@ -72,6 +73,40 @@ body{
   transform:translateY(-20px);
   transition:opacity 0.6s ease, transform 0.6s ease;
 }
+
+.poem-wrap{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:120px;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  pointer-events:none;z-index:100;
+  overflow:hidden;
+}
+.poem-slot{
+  position:absolute;
+  width:100%;
+  text-align:center;
+  font-family:"ZCOOL QingKe HuangYou", cursive;
+  font-size:.95rem;
+  color:rgba(255,220,200,.92);
+  letter-spacing:.08em;
+  line-height:1.8;
+  padding:0 30px;
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.poem-slot.enter{
+  opacity:1;
+  transform:translateY(0);
+}
+.poem-slot.exit{
+  opacity:0;
+  transform:translateY(-30px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+
 </style>
 </head>
 <body>
@@ -183,49 +218,72 @@ document.addEventListener('touchend',function(){
 
 applyTilt(0,0);
 
-// 文字輪播
-var lines = [
-  "寶貝，當你打開這個的時候\n大概是又在想我了吧",
-  "我們的相遇誰都沒想到\n明明不是彼此喜歡的類型，卻互相吸引",
-  "生活中沒有交集的兩個人\n卻被命運的紅線牽絆",
-  "每當你說好想打死我\n我知道那是你想我的方式",
-  "因為每次說完\n你都會說想你了",
-  "我不太會說情話\n但我想讓你知道",
-  "你在我心裡\n一直都有位置",
-  "想我就說\n我在"
-];
-
-var poemLine = document.getElementById('poemLine');
-var currentLine = 0;
-
-function showLine(i){
-  if(i >= lines.length) return;
-  poemLine.innerHTML = lines[i].replace(/\n/g,'<br>');
-  poemLine.classList.remove('out');
-  void poemLine.offsetWidth;
-  poemLine.classList.add('in');
-
-  setTimeout(function(){
-    poemLine.classList.remove('in');
-    poemLine.classList.add('out');
-    setTimeout(function(){
-      poemLine.classList.remove('out');
-      showLine(i+1);
-    }, 700);
-  }, 3000);
-}
-
-// 卡片淡入後 1 秒開始文字
-document.addEventListener("DOMContentLoaded", function(){
-  poemLine = document.getElementById("poemLine");
-  setTimeout(function(){ showLine(0); }, 1200);
-});
-
 </script>
-<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v5</div>
+<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v6</div>
+
+
 
 <div class="poem-wrap" id="poemWrap">
-  <div class="poem-line" id="poemLine"></div>
+  <div class="poem-slot" id="slot0"></div>
+  <div class="poem-slot" id="slot1"></div>
 </div>
+<script>
+// 文字輪播 - 兩句交疊
+var lines = [
+  "寶貝，當你打開這個的時候",
+  "大概是又在想我了吧",
+  "我們的相遇誰都沒想到",
+  "明明不是彼此喜歡的類型，卻互相吸引",
+  "生活中沒有交集的兩個人",
+  "卻被命運的紅線牽絆",
+  "每當你說好想打死我",
+  "我知道那是你想我的方式",
+  "因為每次說完",
+  "你都會說想你了",
+  "我不太會說情話",
+  "但我想讓你知道",
+  "你在我心裡",
+  "一直都有位置",
+  "想我就說",
+  "我在"
+];
+
+var slots = [null, null];
+var current = 0; // 目前用哪個 slot
+var lineIdx = 0;
+var STAY = 2500;   // 停留時間
+var TRANS = 700;   // 動畫時間
+
+function nextLine(){
+  if(lineIdx >= lines.length) return;
+  var incoming = current;       // 新句用這個 slot
+  var outgoing  = 1 - current;  // 舊句在這個 slot
+
+  // 新句進來
+  slots[incoming].textContent = lines[lineIdx];
+  slots[incoming].classList.remove('exit');
+  void slots[incoming].offsetWidth;
+  slots[incoming].classList.add('enter');
+
+  // 舊句離開（如果有內容）
+  if(lineIdx > 0){
+    slots[outgoing].classList.remove('enter');
+    slots[outgoing].classList.add('exit');
+  }
+
+  lineIdx++;
+  current = 1 - current;
+
+  if(lineIdx < lines.length){
+    setTimeout(nextLine, STAY + TRANS);
+  }
+}
+
+window.addEventListener('load', function(){
+  slots[0] = document.getElementById('slot0');
+  slots[1] = document.getElementById('slot1');
+  setTimeout(nextLine, 1500);
+});
+</script>
 </body>
 </html>
