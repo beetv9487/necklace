@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>💫 給你的驚喜</title>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-  background:#1a1a2e;
+  background:#1a0810;
   display:flex;align-items:center;justify-content:center;
   min-height:100vh;overflow:hidden;touch-action:none;
 }
@@ -40,20 +40,38 @@ body{
 .frame{position:absolute;inset:0;z-index:7;pointer-events:none;
   box-shadow:inset 0 0 0 2px rgba(201,169,110,.5);}
 
-.poem{
-  width:min(320px,90vw);
-  margin-top:20px;
-  color:rgba(255,255,255,.82);
-  font-family:"Zen Maru Gothic", sans-serif;
-  font-size:.85rem;
-  line-height:2;
-  text-align:center;
-  letter-spacing:.05em;
-  opacity:0;
-  transition:opacity 2s ease 1s;
-}
+
 .poem.show{opacity:1;}
-.poem p{margin-bottom:.8em;}
+
+
+.poem-wrap{
+  position:fixed;bottom:40px;left:0;right:0;
+  display:flex;justify-content:center;align-items:center;
+  pointer-events:none;z-index:100;
+  min-height:100px;
+}
+.poem-line{
+  position:absolute;
+  font-family:"ZCOOL QingKe HuangYou", cursive;
+  font-size:.9rem;
+  color:rgba(255,220,200,.9);
+  text-align:center;
+  line-height:1.9;
+  letter-spacing:.08em;
+  padding:0 30px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.8s ease, transform 0.8s ease;
+}
+.poem-line.in{
+  opacity:1;
+  transform:translateY(0);
+}
+.poem-line.out{
+  opacity:0;
+  transform:translateY(-20px);
+  transition:opacity 0.6s ease, transform 0.6s ease;
+}
 </style>
 </head>
 <body>
@@ -67,13 +85,7 @@ body{
     </div>
   </div>
 
-  <div class="poem" id="poem">
-    <p>寶貝，當你打開這個的時候<br>大概是又在想我了吧</p>
-    <p>我們的相遇誰都沒想到<br>明明不是彼此喜歡的類型，卻互相吸引<br>生活中沒有交集的兩個人，卻被命運的紅線牽絆</p>
-    <p>每當你說好想打死我<br>我知道那是你想我的方式<br>因為每次說完<br>你都會說想你了</p>
-    <p>我不太會說情話<br>但我想讓你知道<br>你在我心裡<br>一直都有位置</p>
-    <p>想我就說<br>我在</p>
-  </div>
+  
 </div>
 
 <script>
@@ -83,7 +95,7 @@ document.getElementById('fgImg').src = 'person.png';
 // 開場淡入
 window.addEventListener('load', function(){
   setTimeout(function(){ document.getElementById('wrap').classList.add('show');
-    document.getElementById('poem').classList.add('show'); }, 100);
+     }, 100);
 });
 
 var card=document.getElementById('card');
@@ -170,7 +182,47 @@ document.addEventListener('touchend',function(){
 },{passive:false});
 
 applyTilt(0,0);
+
+// 文字輪播
+var lines = [
+  "寶貝，當你打開這個的時候\n大概是又在想我了吧",
+  "我們的相遇誰都沒想到\n明明不是彼此喜歡的類型，卻互相吸引",
+  "生活中沒有交集的兩個人\n卻被命運的紅線牽絆",
+  "每當你說好想打死我\n我知道那是你想我的方式",
+  "因為每次說完\n你都會說想你了",
+  "我不太會說情話\n但我想讓你知道",
+  "你在我心裡\n一直都有位置",
+  "想我就說\n我在"
+];
+
+var poemLine = document.getElementById('poemLine');
+var currentLine = 0;
+
+function showLine(i){
+  if(i >= lines.length) return;
+  poemLine.innerHTML = lines[i].replace(/\n/g,'<br>');
+  poemLine.classList.remove('out');
+  void poemLine.offsetWidth;
+  poemLine.classList.add('in');
+
+  setTimeout(function(){
+    poemLine.classList.remove('in');
+    poemLine.classList.add('out');
+    setTimeout(function(){
+      poemLine.classList.remove('out');
+      showLine(i+1);
+    }, 700);
+  }, 3000);
+}
+
+// 卡片淡入後 1 秒開始文字
+setTimeout(function(){ showLine(0); }, 1200);
+
 </script>
-<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v3</div>
+<div style="position:fixed;bottom:8px;right:10px;font-size:.6rem;color:rgba(255,255,255,.6);z-index:999;letter-spacing:1px;pointer-events:none;">v4</div>
+
+<div class="poem-wrap" id="poemWrap">
+  <div class="poem-line" id="poemLine"></div>
+</div>
 </body>
 </html>
