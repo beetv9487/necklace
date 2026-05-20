@@ -111,6 +111,28 @@ body{
   letter-spacing:.15em;text-align:center;
   margin-top:20px;line-height:2;
 }
+
+/* 翻面光澤效果 */
+.card-wrap::after{
+  content:'';
+  position:absolute;inset:0;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,255,255,0) 40%,rgba(255,255,255,0.35) 50%,rgba(255,255,255,0) 60%);
+  opacity:0;
+  pointer-events:none;
+  z-index:10;
+  transition:opacity 0.3s ease;
+}
+.card-wrap.flipping::after{
+  animation:gloss 3s ease forwards;
+}
+@keyframes gloss{
+  0%{opacity:0;}
+  20%{opacity:0;}
+  45%{opacity:0.8;}
+  55%{opacity:0.8;}
+  100%{opacity:0;}
+}
 </style>
 </head>
 <body>
@@ -156,7 +178,7 @@ body{
   <span id="seekTime">0.0s</span>
 </div>
 
-<div id="ver">v52</div>
+<div id="ver">v54</div>
 
 <script>
 // ── 圖片載入
@@ -259,11 +281,41 @@ document.getElementById('intro-btn').addEventListener('click',function(){
 
 // ── 播放/暫停按鈕（引導頁後也可以用）
 playBtn.addEventListener('click',function(){
-  if(!started){started=true;mainAudio.play();playBtn.textContent='⏸';playBtn.classList.add('playing');startCarousel();}
-  else if(mainAudio.paused){mainAudio.play();playBtn.textContent='⏸';}
-  else{mainAudio.pause();playBtn.textContent='▶';}
+  if(!started){
+    started=true;mainAudio.play();playBtn.textContent='⏸';
+    playBtn.classList.add('playing');startCarousel();
+  } else if(mainAudio.paused){
+    // 重播：如果已結束，從頭開始
+    if(mainAudio.currentTime>=mainAudio.duration-0.5 || mainAudio.currentTime===0){
+      mainAudio.currentTime=0;
+      // 馬上翻回正面（不要動畫）
+      if(flipped){
+        flipped=false;
+        cardWrap.classList.remove('flipping');
+        cardWrap.classList.remove('flipped');
+      }
+      els=[];lastIdx=-1;
+      stage.innerHTML='';
+    }
+    mainAudio.play();playBtn.textContent='⏸';
+  } else {
+    mainAudio.pause();playBtn.textContent='▶';
+  }
 });
-mainAudio.addEventListener('ended',function(){playBtn.textContent='▶';playBtn.classList.remove('playing');});
+mainAudio.addEventListener('ended',function(){
+  playBtn.textContent='▶';playBtn.classList.remove('playing');
+  // 文字慢慢淡出
+  els.forEach(function(el){
+    el.style.transition='opacity 2s ease';
+    el.style.opacity='0';
+  });
+  setTimeout(function(){
+    els.forEach(function(el){if(el.parentNode)el.parentNode.removeChild(el);});
+    els=[];lastIdx=-1;
+  },2100);
+  // 翻回正面
+  if(flipped) undoFlip();
+});
 
 // ── 卡片翻面邏輯
 // doFlip()：正面→背面（加 flipped class）
